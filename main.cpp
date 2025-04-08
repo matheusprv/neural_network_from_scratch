@@ -10,16 +10,19 @@ using namespace std;
 int main() {
 
     vector<vector<float>> X = {
-        {-0.96639924, 5.82608733, -0.68022676, -7.83469193, -0.86759439}
+        {0.96639924, 0.82608733, 0.68022676, 0.83469193, 0.86759439}
     };
 
+    vector<float> Y = {1.0};
+
     Network network(5);
-    network.addLayer(3);
-    network.addLayer(3);
+    network.addLayer(3, "relu");
+    network.addLayer(3, "relu");
     network.addLayer(1);
 
     vector<vector<float>> output = network.feedForward(X);
-    
+    vector<float> Ypred = {output[0][0]};
+
     int rows = output.size();
     int columns = output.size();
     for(int i=0; i<rows; i++){
@@ -27,4 +30,9 @@ int main() {
             cout << output[i][j] << endl;
         }
     }
+
+    float mse = network.mse(Y, Ypred);
+    cout << mse << endl;
+
+    // network.printNetwork();
 }

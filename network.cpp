@@ -73,9 +73,15 @@ vector<vector<float>> Network :: feedLayer(vector<vector<float>> X, Layer layer)
     
     vector<vector<float>> z = matrixMultiplication(X, W);
     z = addBias(z, b);
-    vector<vector<float>> a = ReLU(z);
 
-    return a;
+    if(layer.getActivation() == "relu"){
+        vector<vector<float>> a = ReLU(z);
+        return a;
+    }
+    else{
+        return z;
+    }
+    
 }
 
 vector<vector<float>> Network :: feedForward(vector<vector<float>> X){
@@ -88,7 +94,7 @@ vector<vector<float>> Network :: feedForward(vector<vector<float>> X){
     return temp;    
 }
 
-void Network :: addLayer(int n_neurons){
+void Network :: addLayer(int n_neurons, string activation){
     int neuronInputs = 0;
 
     if(this->numLayers == 0)
@@ -98,7 +104,32 @@ void Network :: addLayer(int n_neurons){
         // Number of neurons from the previous layer
         neuronInputs = this->layers[this->numLayers - 1].getN_neurons();
     
-    Layer newLayer(neuronInputs, n_neurons);
+    Layer newLayer(neuronInputs, n_neurons, activation);
     this->layers.push_back(newLayer);
     this->numLayers++;
+}
+
+float Network :: mse(vector<float> yTrue, vector<float> yPred){
+    int n_yTrue = yTrue.size();
+    int n_yPred = yPred.size();
+
+    if (n_yTrue != n_yPred) throw invalid_argument("yTrue ("+ to_string(n_yTrue) +") and yPred "+ to_string(n_yPred) +" have different number of itens");
+    
+    float summation = 0;
+    float temp = 0.0;
+    for(int i = 0; i < n_yTrue; i++){
+        temp = yTrue[i] - yPred[i];
+        summation += temp*temp;
+    }
+
+    summation = summation / n_yTrue;
+    return summation;
+}
+
+
+void Network :: printNetwork(){
+    for(Layer temp : this->layers){
+        temp.printWeightsAndBias();
+        cout << " " << endl;
+    }
 }

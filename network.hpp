@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdexcept>
 #include "layer.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -26,7 +27,11 @@ public:
 
     vector<vector<float>> feedForward(vector<vector<float>> X);
 
-    void addLayer(int n_neurons);
+    void addLayer(int n_neurons, string activation="");
+
+    float mse(vector<float> yTrue, vector<float> yHat);
+
+    void printNetwork();
 
 };
 
