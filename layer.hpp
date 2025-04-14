@@ -8,24 +8,29 @@
 using namespace std;
 
 class Layer{
-    int n_inputs;
-    int n_neurons;
-    int n_bias;
+    int inputs;
+    int outputs;
     string activation;
 
-    vector<vector<float>> weights;
-    vector<float> bias;
+    default_random_engine generator;
 
-    vector<vector<float>> initializeWeights(int inputs, int n_neurons);
-    vector<float> initializeBias(int n_neurons);
+    vector<vector<float>> weights;
+    vector<vector<float>> bias;
+
+    vector<vector<float>> initializeWeights(int inputs, int outputs);
+    vector<vector<float>> initializeBias(int outputs);
 
 public:
-    Layer(int n_inputs=0, int n_neurons=0, string activation="");
+    Layer(int inputs=0, int outputs=0, string activation="");
     virtual ~Layer();
 
     int getN_neurons() const;
     vector<vector<float>> getWeights() const;
-    vector<float> getBias() const;
+    vector<vector<float>> getBias() const;
+    
+    void setWeights(vector<vector<float>> weights);
+    void setBias(vector<vector<float>> bias);
+    
     string getActivation() const;
 
     void printWeightsAndBias();

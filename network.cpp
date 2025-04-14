@@ -7,93 +7,6 @@ Network :: Network(int inputSize){
 
 Network :: ~Network(){}
 
-vector<vector<float>> Network :: matrixMultiplication(vector<vector<float>> a, vector<vector<float>> b){
-    int rowsA = a.size();
-    int columnsA = a[0].size();
-
-    int rowsB = b.size();
-    int columnsB = b[0].size();
-
-    if(columnsA != rowsB){
-        throw invalid_argument(
-            "Matrix A has shape (" + to_string(rowsA) + "," + to_string(columnsA) +") and " +
-            "matrix B has shape (" + to_string(rowsB) + "," + to_string(columnsB) +").\n" +
-            "The number of columns of matrix A must match the number of rows of matrix B"
-        );
-    }
-
-    vector<vector<float>> output(rowsA, vector<float>(columnsB, 0));
-
-    for(int i=0; i < rowsA; i++)
-        for(int j=0; j < columnsB; j++)
-            for(int k=0; k < columnsA; k++) // columnsA = rowsB 
-                output[i][j] += a[i][k] * b[k][j];
-            
-    return output;   
-}
-
-vector<vector<float>> Network :: addBias(vector<vector<float>> a, vector<float> b){
-    int rowsA = a.size();
-    int columnsA = a[0].size();
-
-    int columnsB = b.size();
-
-    if(rowsA != 1 || columnsA != columnsB){
-        throw invalid_argument(
-            "Matrix A has shape (" + to_string(rowsA) + "," + to_string(columnsA) +") and " +
-            "matrix B has shape (" + to_string(1) + "," + to_string(columnsB) +").\n" +
-            "The matrices must have the same shape"
-        );
-    }
-
-    vector<vector<float>> output(rowsA, vector<float>(columnsB, 0));
-
-    for(int i=0; i<rowsA; i++)
-        for(int j=0; j<columnsA; j++)
-            output[i][j] = a[i][j] + b[j];
-    
-    return output;
-}
-
-vector<vector<float>> Network :: ReLU(vector<vector<float>> z){
-    int rows = z.size();
-    int columns = z[0].size();
-
-    for(int i=0; i<rows; i++)
-        for(int j=0; j<columns; j++)
-            if(z[i][j] < 0)
-                z[i][j] = 0;
-
-    return z;
-}
-
-vector<vector<float>> Network :: feedLayer(vector<vector<float>> X, Layer layer){    
-    vector<vector<float>> W = layer.getWeights();
-    vector<float> b = layer.getBias();
-    
-    vector<vector<float>> z = matrixMultiplication(X, W);
-    z = addBias(z, b);
-
-    if(layer.getActivation() == "relu"){
-        vector<vector<float>> a = ReLU(z);
-        return a;
-    }
-    else{
-        return z;
-    }
-    
-}
-
-vector<vector<float>> Network :: feedForward(vector<vector<float>> X){
-    vector<vector<float>> temp = this->feedLayer(X, this->layers[0]);
-    
-    for(int i=1; i<this->numLayers; i++){
-        temp = feedLayer(temp, this->layers[i]);
-    }
-
-    return temp;    
-}
-
 void Network :: addLayer(int n_neurons, string activation){
     int neuronInputs = 0;
 
@@ -109,27 +22,101 @@ void Network :: addLayer(int n_neurons, string activation){
     this->numLayers++;
 }
 
-float Network :: mse(vector<float> yTrue, vector<float> yPred){
-    int n_yTrue = yTrue.size();
-    int n_yPred = yPred.size();
-
-    if (n_yTrue != n_yPred) throw invalid_argument("yTrue ("+ to_string(n_yTrue) +") and yPred "+ to_string(n_yPred) +" have different number of itens");
-    
-    float summation = 0;
-    float temp = 0.0;
-    for(int i = 0; i < n_yTrue; i++){
-        temp = yTrue[i] - yPred[i];
-        summation += temp*temp;
-    }
-
-    summation = summation / n_yTrue;
-    return summation;
-}
-
-
 void Network :: printNetwork(){
     for(Layer temp : this->layers){
         temp.printWeightsAndBias();
         cout << " " << endl;
+    }
+}
+
+
+void Network :: SGD(vector<input> X, vector<output> Y, int n_epochs, float learning_rate){
+    if(X.size() != Y.size()) throw invalid_argument("X and Y have different sizes");
+
+    learning_rate *= -1;
+    int L = this->layers.size();
+
+    for(int epoch=1; epoch <= n_epochs; epoch++){
+        for(size_t i = 0; i < X.size(); i++){
+            input x = X[i];
+            output y = Y[i];
+
+            
+            stack <vector<vector<float>>> dW;
+            stack <vector<vector<float>>> dB;
+
+            stack <vector<vector<float>>> zs;
+            stack <vector<vector<float>>> as;
+
+            as.push(x);
+            // forward
+            vector<vector<float>> z;
+            vector<vector<float>> a = x;
+            for(Layer layer : this->layers){
+                z = matrixMultiplication(layer.getWeights(), a);
+                z = matrixAddition(z, layer.getBias());
+
+                if(layer.getActivation()=="relu")
+                    a = ReLU(z);
+                else
+                    a = z;
+                
+                zs.push(z);
+                as.push(a);
+            }
+
+            // backprop
+            vector<vector<float>> delta = hadamardProduct(
+                mseDerivative(as.top(), y),
+                ReLUDerivative(zs.top())
+            );
+            as.pop(); zs.pop();
+
+            dB.push(delta);
+            dW.push(matrixMultiplication(delta, transposeMatrix(as.top())));
+            as.pop();
+            
+            for(int l = L-2; l >= 0; l--){
+                vector<vector<float>> activationDerivative;
+                if(this->layers[l].getActivation() == "relu")
+                    activationDerivative = ReLUDerivative(zs.top());
+                else
+                    activationDerivative = linearDerivative(zs.top());
+
+                delta = hadamardProduct(
+                    matrixMultiplication(
+                        transposeMatrix(this->layers[l+1].getWeights()),
+                        delta
+                    ),
+                    activationDerivative
+                );
+
+                dB.push(delta);
+                dW.push(matrixMultiplication(delta, transposeMatrix(as.top())));
+
+                as.pop(); zs.pop();
+            }
+
+            // update weights and biases
+            for(Layer &layer : this->layers){
+
+                layer.setWeights(
+                    matrixAddition(
+                        layer.getWeights(),
+                        multiplicationByScalar(learning_rate, dW.top())
+                    )
+                );
+
+                layer.setBias(
+                    matrixAddition(
+                        layer.getBias(),
+                        multiplicationByScalar(learning_rate, dB.top())
+                    )
+                );
+
+                dB.pop();
+                dW.pop();
+            }
+        }
     }
 }
