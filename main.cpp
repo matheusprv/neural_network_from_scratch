@@ -1,30 +1,20 @@
 using namespace std;
 
-
+#include "csv.hpp"
 #include "network.hpp"
 
 int main() {
 
-    /*
-        5 neuronios de entrada
-        3
-        3
-        1
 
-        Y_true = (outputs, batches) = (1, batches)
-    */
+    auto [X, Y] = readCSV("dataset/mnist_test.csv");
+    
 
-    input X = {
-        {1}, 
-        {2}, 
-    };
+    Network network(784);
+    network.addLayer(32, "relu");
+    network.addLayer(32, "relu");
+    network.addLayer(1);
 
-    output Y = {
-        {3.0}
-    };
-
-
-    // m: inputs - n: outputs -> A matriz de pesos deve ser (n,m) Uma linha para cada neuronio
+    network.SGD(X, Y, 10);
 
     return 0;
 }

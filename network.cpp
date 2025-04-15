@@ -33,10 +33,12 @@ void Network :: printNetwork(){
 void Network :: SGD(vector<input> X, vector<output> Y, int n_epochs, float learning_rate){
     if(X.size() != Y.size()) throw invalid_argument("X and Y have different sizes");
 
-    learning_rate *= -1;
     int L = this->layers.size();
-
+    
     for(int epoch=1; epoch <= n_epochs; epoch++){
+        float loss = 0.0;
+        cout << "Starting epoch " << epoch << endl;
+
         for(size_t i = 0; i < X.size(); i++){
             input x = X[i];
             output y = Y[i];
@@ -65,10 +67,12 @@ void Network :: SGD(vector<input> X, vector<output> Y, int n_epochs, float learn
                 as.push(a);
             }
 
+            loss += squaredError(a, y);
+
             // backprop
             vector<vector<float>> delta = hadamardProduct(
-                mseDerivative(as.top(), y),
-                ReLUDerivative(zs.top())
+                seDerivative(as.top(), y),
+                linearDerivative(zs.top())
             );
             as.pop(); zs.pop();
 
@@ -103,14 +107,14 @@ void Network :: SGD(vector<input> X, vector<output> Y, int n_epochs, float learn
                 layer.setWeights(
                     matrixAddition(
                         layer.getWeights(),
-                        multiplicationByScalar(learning_rate, dW.top())
+                        multiplicationByScalar(-learning_rate, dW.top())
                     )
                 );
 
                 layer.setBias(
                     matrixAddition(
                         layer.getBias(),
-                        multiplicationByScalar(learning_rate, dB.top())
+                        multiplicationByScalar(-learning_rate, dB.top())
                     )
                 );
 
@@ -118,5 +122,8 @@ void Network :: SGD(vector<input> X, vector<output> Y, int n_epochs, float learn
                 dW.pop();
             }
         }
+    
+        loss /= X.size();
+        cout << "mse: " << loss << endl;
     }
 }

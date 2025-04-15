@@ -10,7 +10,7 @@ Layer :: Layer(int inputs, int outputs, string activation){
     this->bias = initializeBias(outputs);
 
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-    seed = 42;
+    //seed = 42;
     this->generator = default_random_engine (seed);
 
 }

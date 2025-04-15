@@ -2,8 +2,11 @@
 #define LOSS_H
 
 #include <vector>
+#include <stdexcept>
 using namespace std;
 
-vector<vector<float>> mseDerivative(vector<vector<float>> yPred, vector<vector<float>> yTrue);
+float squaredError(vector<vector<float>> yPred, vector<vector<float>> yTrue);
+
+vector<vector<float>> seDerivative(vector<vector<float>> yPred, vector<vector<float>> yTrue);
 
 #endif
