@@ -5,7 +5,8 @@
 #include <random>
 #include <chrono>
 #include <vector>
-using namespace std;
+
+#include "utils.hpp"
 
 class Layer{
     int inputs;
@@ -14,22 +15,22 @@ class Layer{
 
     default_random_engine generator;
 
-    vector<vector<float>> weights;
-    vector<vector<float>> bias;
+    matrix weights;
+    matrix bias;
 
-    vector<vector<float>> initializeWeights(int inputs, int outputs);
-    vector<vector<float>> initializeBias(int outputs);
+    matrix initializeWeights(int inputs, int outputs);
+    matrix initializeBias(int outputs);
 
 public:
     Layer(int inputs=0, int outputs=0, string activation="");
     virtual ~Layer();
 
     int getN_neurons() const;
-    vector<vector<float>> getWeights() const;
-    vector<vector<float>> getBias() const;
+    matrix getWeights() const;
+    matrix getBias() const;
     
-    void setWeights(vector<vector<float>> weights);
-    void setBias(vector<vector<float>> bias);
+    void setWeights(matrix weights);
+    void setBias(matrix bias);
     
     string getActivation() const;
 

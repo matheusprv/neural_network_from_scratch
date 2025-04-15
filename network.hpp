@@ -7,17 +7,12 @@
 #include "loss.hpp"
 #include <stack>
 
-#define input vector<vector<float>> 
-#define output vector<vector<float>> 
-
 using namespace std;
 
 class Network{
     int inputSize;
     int numLayers;
     vector<Layer> layers;    
-
-    
 
 public:
     Network(int inputSize);
@@ -27,8 +22,17 @@ public:
 
     void printNetwork();
 
+    void SGD(vector<matrix> X, vector<matrix> Y, int n_epochs=10, float learning_rate=0.001);
+    
+    float forwardPropagation(matrix x, matrix y, stack <matrix>* zs, stack<matrix>* as);
 
-    void SGD(vector<input> X, vector<output> Y, int n_epochs=10, float learning_rate=0.001);
+    void backpropagation(matrix y, stack <matrix>* zs, stack<matrix>* as, stack <matrix>* dW, stack<matrix>* dB);
+
+    void updateWeightsAndBiases(const float& learning_rate, stack <matrix>* dW, stack<matrix>* dB);
+
+    matrix make_prediction(matrix x);
+
+    void evaluation(vector<matrix> X, vector<matrix> Y);
 
 };
 

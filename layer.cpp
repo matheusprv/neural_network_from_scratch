@@ -20,11 +20,11 @@ Layer :: ~Layer(){}
 /*
     Initialize the weights with normal distribution in range (-1.0, 1.0)
 */
-vector<vector<float>> Layer :: initializeWeights(int inputs, int outputs){
+matrix Layer :: initializeWeights(int inputs, int outputs){
 
     normal_distribution<double> distribution(0, 0.5);
 
-    vector<vector<float>> weights(outputs, vector<float>(inputs, 0));
+    matrix weights(outputs, vector<float>(inputs, 0));
 
     for(int i=0; i<outputs; i++)
         for(int j=0; j<inputs; j++)
@@ -36,8 +36,8 @@ vector<vector<float>> Layer :: initializeWeights(int inputs, int outputs){
 /*
     Initialize the bias with zeros
 */
-vector<vector<float>> Layer :: initializeBias(int outputs){
-    vector<vector<float>> bias(outputs, vector<float>(1, 0));
+matrix Layer :: initializeBias(int outputs){
+    matrix bias(outputs, vector<float>(1, 0));
     return bias;
 }
 
@@ -46,17 +46,17 @@ int Layer :: getN_neurons() const{
     return this->outputs;
 }
 
-vector<vector<float>> Layer :: getWeights() const{
+matrix Layer :: getWeights() const{
     return this->weights;
 }
-vector<vector<float>> Layer :: getBias() const{
+matrix Layer :: getBias() const{
     return this->bias;
 }
 
-void Layer :: setWeights(vector<vector<float>> weights){
+void Layer :: setWeights(matrix weights){
     this->weights = weights;
 }
-void Layer ::  setBias(vector<vector<float>> bias){
+void Layer ::  setBias(matrix bias){
     this->bias = bias;
 }
 
