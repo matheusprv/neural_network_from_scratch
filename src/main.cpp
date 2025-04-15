@@ -14,7 +14,7 @@ int main() {
     network.addLayer(16, "relu");
     network.addLayer(1);
 
-    network.SGD(X, Y, 10);
+    network.SGD(X, Y, 10, 0.001f);
 
     cout << endl;
     auto [X_test, Y_test] = readCSV("dataset/mnist_test.csv");
