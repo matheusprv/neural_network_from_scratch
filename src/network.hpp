@@ -32,7 +32,7 @@ public:
 
     matrix make_prediction(matrix x);
 
-    void evaluation(vector<matrix> X, vector<matrix> Y);
+    void evaluate(vector<matrix> X, vector<matrix> Y);
 
 };
 

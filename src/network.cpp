@@ -155,7 +155,7 @@ matrix Network :: make_prediction(matrix x){
     return a;
 }
 
-void Network :: evaluation(vector<matrix> X, vector<matrix> Y){
+void Network :: evaluate(vector<matrix> X, vector<matrix> Y){
 
     int N = static_cast<int>(X.size());    
     float loss = 0.0f;
@@ -170,5 +170,5 @@ void Network :: evaluation(vector<matrix> X, vector<matrix> Y){
     }
 
     loss /= N;
-    cout << "Final loss: " << loss << endl;
+    cout << "Test loss: " << loss << endl;
 }
