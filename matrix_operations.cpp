@@ -1,6 +1,6 @@
 #include "matrix_operations.hpp"
 
-vector<vector<float>> matrixMultiplication(vector<vector<float>> a, vector<vector<float>> b){
+matrix matrixMultiplication(const matrix& a, const matrix& b){
     int rowsA = a.size();
     int columnsA = a[0].size();
 
@@ -15,7 +15,7 @@ vector<vector<float>> matrixMultiplication(vector<vector<float>> a, vector<vecto
         );
     }
 
-    vector<vector<float>> output(rowsA, vector<float>(columnsB, 0));
+    matrix output(rowsA, vector<float>(columnsB, 0));
 
     for(int i=0; i < rowsA; i++)
         for(int j=0; j < columnsB; j++)
@@ -26,7 +26,7 @@ vector<vector<float>> matrixMultiplication(vector<vector<float>> a, vector<vecto
 }
 
 
-vector<vector<float>> elementWiseOperation(vector<vector<float>> a, vector<vector<float>> b, float (*op)(float, float)){
+matrix elementWiseOperation(const matrix&  a, const matrix& b, float (*op)(float, float)){
     int rowsA = a.size();
     int columnsA = a[0].size();
 
@@ -41,7 +41,7 @@ vector<vector<float>> elementWiseOperation(vector<vector<float>> a, vector<vecto
         );
     }
 
-    vector<vector<float>> output(rowsA, vector<float>(columnsB, 0));
+    matrix output(rowsA, vector<float>(columnsB, 0));
 
     for(int i=0; i<rowsA; i++)
         for(int j=0; j<columnsA; j++)
@@ -50,26 +50,26 @@ vector<vector<float>> elementWiseOperation(vector<vector<float>> a, vector<vecto
     return output;
 }
 
-vector<vector<float>> matrixAddition(vector<vector<float>> a, vector<vector<float>> b){
+matrix matrixAddition(const matrix& a, const matrix& b){
     auto op = [](float a, float b) {return a + b;};
     return elementWiseOperation(a, b, op);
 }
 
-vector<vector<float>> matrixSubtraction(vector<vector<float>> a, vector<vector<float>> b){
+matrix matrixSubtraction(const matrix& a, const matrix& b){
     auto op = [](float a, float b) {return a - b;};
     return elementWiseOperation(a, b, op);
 }
 
-vector<vector<float>> hadamardProduct(vector<vector<float>> a, vector<vector<float>> b){
+matrix hadamardProduct(const matrix& a, const matrix& b){
     auto op = [](float a, float b) {return a * b;};
     return elementWiseOperation(a, b, op);
 }
 
-vector<vector<float>> transposeMatrix (vector<vector<float>> a){
+matrix transposeMatrix (const matrix& a){
     int rows = a.size();
     int columns = a[0].size();
 
-    vector<vector<float>> transpose(columns, vector<float>(rows, 0));
+    matrix transpose(columns, vector<float>(rows, 0));
 
     for(int i=0; i<rows; i++)
         for(int j=0; j<columns; j++)
@@ -78,12 +78,17 @@ vector<vector<float>> transposeMatrix (vector<vector<float>> a){
     return transpose;
 }
 
-vector<vector<float>> multiplicationByScalar(float scalar, vector<vector<float>> a){
+matrix multiplicationByScalar(float scalar, const matrix &a){
+    int rows = a.size();
+    int columns = a[0].size();
+
+    matrix output(rows, vector<float>(columns, 0));
+
     for(size_t i = 0; i < a.size(); i ++){
         for(size_t j = 0; j < a[0].size(); j++){
-            a[i][j] *= scalar;
+            output[i][j] = a[i][j] * scalar;
         }
     }
 
-    return a;
+    return output;
 }

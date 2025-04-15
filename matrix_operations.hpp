@@ -6,20 +6,21 @@
 
 using namespace std;
  
+#define matrix vector<vector<float>>
 
-vector<vector<float>> matrixMultiplication(vector<vector<float>> a, vector<vector<float>> b);
+matrix matrixMultiplication(const matrix& a, const matrix& b);
 
-vector<vector<float>> elementWiseOperation(vector<vector<float>> a, vector<vector<float>> b, float (*op)(float, float));
+matrix elementWiseOperation(const matrix& a, const matrix& b, float (*op)(float, float));
 
-vector<vector<float>> matrixAddition(vector<vector<float>> a, vector<vector<float>> b);
+matrix matrixAddition(const matrix& a, const matrix& b);
 
-vector<vector<float>> matrixSubtraction(vector<vector<float>> a, vector<vector<float>> b);
+matrix matrixSubtraction(const matrix& a, const matrix& b);
     
-vector<vector<float>> hadamardProduct(vector<vector<float>> a, vector<vector<float>> b);
+matrix hadamardProduct(const matrix& a, const matrix& b);
     
-vector<vector<float>> transposeMatrix(vector<vector<float>> a);
+matrix transposeMatrix(const matrix& a);
 
-vector<vector<float>> multiplicationByScalar(float scalar, vector<vector<float>> a);
+matrix multiplicationByScalar(float scalar, const matrix& a);
 
 
 #endif
