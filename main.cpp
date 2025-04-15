@@ -1,38 +1,20 @@
-#include <iostream>
-#include <vector>
-#include <stdexcept>
-
 using namespace std;
 
+#include "csv.hpp"
 #include "network.hpp"
-
 
 int main() {
 
-    vector<vector<float>> X = {
-        {0.96639924, 0.82608733, 0.68022676, 0.83469193, 0.86759439}
-    };
 
-    vector<float> Y = {1.0};
+    auto [X, Y] = readCSV("dataset/mnist_test.csv");
+    
 
-    Network network(5);
-    network.addLayer(3, "relu");
-    network.addLayer(3, "relu");
+    Network network(784);
+    network.addLayer(32, "relu");
+    network.addLayer(32, "relu");
     network.addLayer(1);
 
-    vector<vector<float>> output = network.feedForward(X);
-    vector<float> Ypred = {output[0][0]};
+    network.SGD(X, Y, 10);
 
-    int rows = output.size();
-    int columns = output.size();
-    for(int i=0; i<rows; i++){
-        for(int j=0; j<columns; j++){
-            cout << output[i][j] << endl;
-        }
-    }
-
-    float mse = network.mse(Y, Ypred);
-    cout << mse << endl;
-
-    // network.printNetwork();
+    return 0;
 }
