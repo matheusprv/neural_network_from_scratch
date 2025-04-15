@@ -3,11 +3,8 @@
 
 #include <vector>
 #include <stdexcept>
-
-using namespace std;
+#include "utils.hpp"
  
-#define matrix vector<vector<float>>
-
 matrix matrixMultiplication(const matrix& a, const matrix& b);
 
 matrix elementWiseOperation(const matrix& a, const matrix& b, float (*op)(float, float));
